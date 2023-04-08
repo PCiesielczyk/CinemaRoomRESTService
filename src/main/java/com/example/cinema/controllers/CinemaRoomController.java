@@ -6,10 +6,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CinemaRoomController {
-    public static final int TOTAL_ROWS = 9;
-    public static final int TOTAL_COLUMNS = 9;
+    CinemaRoom cinemaRoom;
+
+    public CinemaRoomController(CinemaRoom cinemaRoom) {
+        this.cinemaRoom = cinemaRoom;
+    }
     @GetMapping("/seats")
     public CinemaRoom getCinemaRoom() {
-        return new CinemaRoom(TOTAL_ROWS, TOTAL_COLUMNS);
+        return cinemaRoom;
     }
 }

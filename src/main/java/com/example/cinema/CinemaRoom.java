@@ -1,9 +1,11 @@
 package com.example.cinema;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
+@Component
 public class CinemaRoom {
 
     private final int totalRows;

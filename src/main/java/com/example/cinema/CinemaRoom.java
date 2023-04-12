@@ -1,24 +1,34 @@
 package com.example.cinema;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+@Getter
 @Component
 public class CinemaRoom {
 
     private final int totalRows;
     private final int totalColumns;
-    private final ArrayList<Seat> seats;
+    private final List<Seat> seats;
 
     public CinemaRoom(@Value("${cinema.cols}") int totalColumns, @Value("${cinema.rows}") int totalRows) {
 
-        seats = new ArrayList<>();
+        seats =  Collections.synchronizedList(new ArrayList<>());
+        int standardSeatPrice = 8;
+        int premiumSeatPrice = 10;
 
         for (int row = 1; row <= totalRows; row++) {
+            int seatPrice = (row < 5) ? premiumSeatPrice : standardSeatPrice;
+
             for (int column = 1; column <= totalColumns; column++) {
-                seats.add(new Seat(row, column, true)); // create and add a new Seat object to the list
+                seats.add(new Seat(row, column, seatPrice, true));
             }
         }
 
@@ -26,15 +36,19 @@ public class CinemaRoom {
         this.totalColumns = totalColumns;
     }
 
-    public int getTotalRows() {
-        return totalRows;
-    }
+    public Seat bookSeat(int row, int column) {
+        if (row > totalRows || column > totalColumns) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The number of a row or a column is out of bounds!");
+        }
 
-    public int getTotalColumns() {
-        return totalColumns;
-    }
+        Seat bookedSeat = seats.stream()
+                .filter(Seat::isAvailable)
+                .filter(seat -> seat.getRow() == row && seat.getColumn() == column)
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The ticket has been already purchased!"));
 
-    public ArrayList<Seat> getSeats() {
-        return seats;
+        bookedSeat.setAvailable(false);
+
+        return bookedSeat;
     }
 }

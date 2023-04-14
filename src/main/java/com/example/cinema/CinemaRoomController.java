@@ -1,5 +1,7 @@
 package com.example.cinema;
 
+import com.example.cinema.dto.CinemaRoomDTO;
+import com.example.cinema.dto.DTOMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,8 @@ public class CinemaRoomController {
     }
 
     @GetMapping("/seats")
-    public CinemaRoom getCinemaRoom() {
-        return cinemaRoom;
+    public CinemaRoomDTO getCinemaRoom() {
+        return DTOMapper.cinemaRoomToDTO(cinemaRoom);
     }
 
     @PostMapping("/purchase")

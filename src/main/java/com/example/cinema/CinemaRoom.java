@@ -37,12 +37,11 @@ public class CinemaRoom {
     }
 
     public Seat bookSeat(int row, int column) {
-        if (row > totalRows || column > totalColumns) {
+        if (row > totalRows || column > totalColumns || row < 1 || column < 1) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The number of a row or a column is out of bounds!");
         }
 
-        Seat bookedSeat = seats.stream()
-                .filter(Seat::isAvailable)
+        Seat bookedSeat = getAvailableSeats().stream()
                 .filter(seat -> seat.getRow() == row && seat.getColumn() == column)
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The ticket has been already purchased!"));
@@ -50,5 +49,11 @@ public class CinemaRoom {
         bookedSeat.setAvailable(false);
 
         return bookedSeat;
+    }
+
+    public List<Seat> getAvailableSeats() {
+        return seats.stream()
+                .filter(Seat::isAvailable)
+                .toList();
     }
 }

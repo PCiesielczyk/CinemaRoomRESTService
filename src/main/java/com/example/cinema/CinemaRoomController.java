@@ -1,5 +1,7 @@
 package com.example.cinema;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +20,9 @@ public class CinemaRoomController {
     }
 
     @PostMapping("/purchase")
-    public Seat buyTicket(@RequestBody Seat seat) {
-        return cinemaRoom.bookSeat(seat.getRow(), seat.getColumn());
+    public String buyTicket(@RequestBody Seat seat) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(cinemaRoom.bookSeat(seat.getRow(), seat.getColumn()));
     }
 }

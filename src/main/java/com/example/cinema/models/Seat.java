@@ -1,13 +1,14 @@
-package com.example.cinema;
+package com.example.cinema.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
-@AllArgsConstructor
 public class Seat {
 
     private final int row;
@@ -15,6 +16,19 @@ public class Seat {
     private final int price;
     @JsonIgnore
     private boolean isAvailable;
+    @JsonIgnore
+    private UUID ticketUUID;
+
+    public Seat(int row, int column, int price, boolean isAvailable) {
+        this.row = row;
+        this.column = column;
+        this.price = price;
+        this.isAvailable = isAvailable;
+    }
+
+    public void generateUUID() {
+        this.ticketUUID = UUID.randomUUID();
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,6 @@
 package com.example.cinema.dto;
 
-import com.example.cinema.Seat;
+import com.example.cinema.models.Seat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

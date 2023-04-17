@@ -1,4 +1,4 @@
-package com.example.cinema;
+package com.example.cinema.models;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Component
@@ -55,5 +56,17 @@ public class CinemaRoom {
         return seats.stream()
                 .filter(Seat::isAvailable)
                 .toList();
+    }
+
+    public Seat returnTicket(String ticketUUIDString) {
+        UUID ticketUUID = UUID.fromString(ticketUUIDString);
+        Seat seatToRefund = seats.stream()
+                .filter(seat -> !seat.isAvailable())
+                .filter(seat -> seat.getTicketUUID().equals(ticketUUID))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wrong token!"));
+
+        seatToRefund.setAvailable(true);
+        return seatToRefund;
     }
 }

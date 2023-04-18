@@ -18,6 +18,8 @@ public class CinemaRoom {
     private final int totalRows;
     private final int totalColumns;
     private final List<Seat> seats;
+    @Value("${statistics.password}")
+    String chuj;
 
     public CinemaRoom(@Value("${cinema.cols}") int totalColumns, @Value("${cinema.rows}") int totalRows) {
 
@@ -53,6 +55,7 @@ public class CinemaRoom {
     }
 
     public List<Seat> getAvailableSeats() {
+        System.out.println(chuj);
         return seats.stream()
                 .filter(Seat::isAvailable)
                 .toList();

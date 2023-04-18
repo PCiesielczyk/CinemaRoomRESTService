@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class CinemaRoomController {
                 .writeValueAsString(DTOMapper.bookedSeatToDTO(bookedSeat));
     }
 
-    @PostMapping("return")
+    @PostMapping("/return")
     public String returnTicket(@RequestBody JsonNode requestBody) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String token = requestBody.get("token").asText();

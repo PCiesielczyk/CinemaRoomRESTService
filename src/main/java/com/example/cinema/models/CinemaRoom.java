@@ -1,5 +1,6 @@
 package com.example.cinema.models;
 
+import com.example.cinema.Statistics;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -17,13 +18,15 @@ public class CinemaRoom {
 
     private final int totalRows;
     private final int totalColumns;
+    private final Statistics statistics;
     private final List<Seat> seats;
     @Value("${statistics.password}")
-    String chuj;
+    private String statisticsPassword;
 
     public CinemaRoom(@Value("${cinema.cols}") int totalColumns, @Value("${cinema.rows}") int totalRows) {
-
-        seats =  Collections.synchronizedList(new ArrayList<>());
+        this.totalRows = totalRows;
+        this.totalColumns = totalColumns;
+        this.seats =  Collections.synchronizedList(new ArrayList<>());
         int standardSeatPrice = 8;
         int premiumSeatPrice = 10;
 
@@ -34,9 +37,7 @@ public class CinemaRoom {
                 seats.add(new Seat(row, column, seatPrice, true));
             }
         }
-
-        this.totalRows = totalRows;
-        this.totalColumns = totalColumns;
+        this.statistics = new Statistics(totalColumns * totalColumns);
     }
 
     public Seat bookSeat(int row, int column) {
@@ -50,15 +51,9 @@ public class CinemaRoom {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The ticket has been already purchased!"));
 
         bookedSeat.setAvailable(false);
+        statistics.ticketSold(bookedSeat);
 
         return bookedSeat;
-    }
-
-    public List<Seat> getAvailableSeats() {
-        System.out.println(chuj);
-        return seats.stream()
-                .filter(Seat::isAvailable)
-                .toList();
     }
 
     public Seat returnTicket(String ticketUUIDString) {
@@ -70,6 +65,20 @@ public class CinemaRoom {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wrong token!"));
 
         seatToRefund.setAvailable(true);
+        statistics.ticketReturned(seatToRefund);
         return seatToRefund;
+    }
+
+    public List<Seat> getAvailableSeats() {
+        return seats.stream()
+                .filter(Seat::isAvailable)
+                .toList();
+    }
+
+    public Statistics getStatistics(String password) {
+        if (!statisticsPassword.equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The password is wrong!");
+        }
+        return statistics;
     }
 }

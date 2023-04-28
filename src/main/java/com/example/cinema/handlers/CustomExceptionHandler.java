@@ -1,6 +1,5 @@
-package com.example.cinema;
+package com.example.cinema.handlers;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +16,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Map<String, String>> handleNotFoundException(ResponseStatusException exception) {
         Map<String, String> error = new HashMap<>();
         error.put("error", exception.getReason());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return ResponseEntity.status(exception.getStatusCode()).body(error);
     }
 }
